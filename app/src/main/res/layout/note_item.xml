@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/noteItemLayoutParent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="5dp"
+            app:cardCornerRadius="13dp"
+            app:cardElevation="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/noteItemTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/google_sans_medium"
+                    android:padding="5dp"
+                    android:text="This is title"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/noteContentItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/noteItemTitle"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="3dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/google_sans_medium"
+                    android:maxLines="12"
+                    android:padding="5dp"
+                    android:textSize="14sp"
+                    tools:text="@string/some_text" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/noteDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/noteContentItem"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:drawableStart="@drawable/ic_outline_calendar_today_24"
+                    android:drawablePadding="6dp"
+                    android:drawableTint="@color/black"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/google_sans_regular"
+                    android:padding="5dp"
+                    android:layout_alignParentEnd="true"
+                    android:text="dd-mm-yy"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </RelativeLayout>
+</layout>
