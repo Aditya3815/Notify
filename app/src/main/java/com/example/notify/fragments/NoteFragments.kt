@@ -2,20 +2,20 @@ package com.example.notify.fragments
 
 import android.content.res.Configuration
 import android.graphics.Color
-import android.icu.util.TimeUnit
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.notify.NoteApplication
 import com.example.notify.R
 import com.example.notify.activities.MainActivity
 import com.example.notify.adapter.NotesAdapter
@@ -23,6 +23,7 @@ import com.example.notify.databinding.FragmentNoteBinding
 import com.example.notify.utils.SwipeToDelete
 import com.example.notify.utils.hideKeyboard
 import com.example.notify.viewmodel.NoteMainViewModel
+import com.example.notify.viewmodel.NoteViewModelFactory
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
@@ -31,12 +32,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 class NoteFragments : Fragment(R.layout.fragment_note) {
 
     private lateinit var noteBinding: FragmentNoteBinding
-    private val noteViewModel: NoteMainViewModel by viewModels()
     private lateinit var notesAdapter: NotesAdapter
+    private val noteViewModel: NoteMainViewModel by viewModels {
+        NoteViewModelFactory((requireActivity().application as NoteApplication).noteRepository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +52,7 @@ class NoteFragments : Fragment(R.layout.fragment_note) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        noteBinding = FragmentNoteBinding.bind(view)  // Initialize noteBinding here
+        noteBinding = FragmentNoteBinding.bind(view)
 
         val activity = requireActivity() as MainActivity
         val navController = Navigation.findNavController(view)
@@ -60,7 +62,8 @@ class NoteFragments : Fragment(R.layout.fragment_note) {
             delay(10)
             activity.window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             activity.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            activity.window.statusBarColor = Color.parseColor("#9E9D9D")
+            activity.window.statusBarColor = Color.WHITE // Set status bar color to white
+            activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // Ensure light status bar icons
         }
 
         noteBinding.addNoteFab.setOnClickListener {
@@ -102,10 +105,8 @@ class NoteFragments : Fragment(R.layout.fragment_note) {
             if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
                 v.clearFocus()
                 requireView().hideKeyboard()
-
             }
             return@setOnEditorActionListener true
-
         }
 
         noteBinding.rvNote.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -202,5 +203,3 @@ class NoteFragments : Fragment(R.layout.fragment_note) {
         observerDataChanges()  // Ensure data is observed and set to the adapter
     }
 }
-
-

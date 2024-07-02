@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.notify.NoteApplication
 import com.example.notify.R
 import com.example.notify.activities.MainActivity
 import com.example.notify.adapters.ColorAdapter
@@ -21,6 +22,7 @@ import com.example.notify.databinding.FragmentSaveOrDeleteFragmentsBinding
 import com.example.notify.models.NoteEntity
 import com.example.notify.utils.hideKeyboard
 import com.example.notify.viewmodel.NoteMainViewModel
+import com.example.notify.viewmodel.NoteViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.transition.MaterialContainerTransform
@@ -37,7 +39,9 @@ class SaveOrDeleteFragments : Fragment(R.layout.fragment_save_or_delete_fragment
     private var note: NoteEntity? = null
     private var color = -1
     lateinit var result: String
-    private val noteActivityViewModel: NoteMainViewModel by viewModels()
+    private val noteActivityViewModel: NoteMainViewModel by viewModels {
+        NoteViewModelFactory((requireActivity().application as NoteApplication).noteRepository)
+    }
     private val currentDate = SimpleDateFormat.getInstance().format(Date())
     private val job = CoroutineScope(Dispatchers.Main)
     private val args: SaveOrDeleteFragmentsArgs by navArgs()
@@ -58,6 +62,7 @@ class SaveOrDeleteFragments : Fragment(R.layout.fragment_save_or_delete_fragment
         contentBinding = FragmentSaveOrDeleteFragmentsBinding.bind(view)
         navController = Navigation.findNavController(view)
         val activity = activity as MainActivity
+        activity.window.statusBarColor = Color.WHITE
 
         ViewCompat.setTransitionName(
             contentBinding.noteContentFragmentParent,

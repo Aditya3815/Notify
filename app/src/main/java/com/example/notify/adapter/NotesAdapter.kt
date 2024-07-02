@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -25,44 +24,57 @@ import org.commonmark.node.SoftLineBreak
 
 class NotesAdapter : ListAdapter<NoteEntity, NotesAdapter.NotesViewHolder>(DiffUtilCallback) {
 
+    companion object {
+        private const val TRANSITION_NAME_PREFIX = "recyclerView_"
 
+        val DiffUtilCallback = object : DiffUtil.ItemCallback<NoteEntity>() {
+            override fun areItemsTheSame(oldItem: NoteEntity, newItem: NoteEntity): Boolean {
+                return oldItem.id == newItem.id
+            }
 
-    inner class NotesViewHolder(private val binding: NoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val title: MaterialTextView = binding.noteItemTitle
-        private val content: TextView = binding.noteContentItem
-        private val date: MaterialTextView = binding.noteDate
-        private val parent: MaterialCardView = binding.noteItemLayoutParent
-        private val markWon = Markwon.builder(itemView.context)
+            override fun areContentsTheSame(oldItem: NoteEntity, newItem: NoteEntity): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
+
+    private lateinit var markwon: Markwon
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        markwon = Markwon.builder(recyclerView.context)
             .usePlugin(StrikethroughPlugin.create())
-            .usePlugin(TaskListPlugin.create(itemView.context))
+            .usePlugin(TaskListPlugin.create(recyclerView.context))
             .usePlugin(object : AbstractMarkwonPlugin() {
                 override fun configureVisitor(builder: MarkwonVisitor.Builder) {
                     super.configureVisitor(builder)
                     builder.on(SoftLineBreak::class.java) { visitor, _ -> visitor.forceNewLine() }
                 }
             }).build()
+    }
+
+    inner class NotesViewHolder(private val binding: NoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val title: MaterialTextView = binding.noteItemTitle
+        private val content: TextView = binding.noteContentItem
+        private val date: MaterialTextView = binding.noteDate
+        private val parent: MaterialCardView = binding.noteItemLayoutParent
 
         fun bind(note: NoteEntity) {
             title.text = note.title
-            content.text = note.content
-            markWon.setMarkdown(content, note.content)
+            markwon.setMarkdown(content, note.content)
             date.text = note.date
             parent.setCardBackgroundColor(note.color)
-            parent.transitionName = "recyclerView_${note.id}"
-            itemView.setOnClickListener {
+            parent.transitionName = TRANSITION_NAME_PREFIX + note.id
 
+            val clickListener = View.OnClickListener {
                 val action = NoteFragmentsDirections.actionNoteFragmentsToSaveOrDeleteFragments(note)
-                val extras =  FragmentNavigatorExtras(parent to "recyclerView_${note.id}")
+                val extras = FragmentNavigatorExtras(parent to parent.transitionName)
                 it.hideKeyboard()
                 Navigation.findNavController(it).navigate(action, extras)
             }
-            content.setOnClickListener{
-                val action = NoteFragmentsDirections.actionNoteFragmentsToSaveOrDeleteFragments(note)
-                val extras =  FragmentNavigatorExtras(parent to "recyclerView_${note.id}")
-                it.hideKeyboard()
-                Navigation.findNavController(it).navigate(action, extras)
 
-            }
+            itemView.setOnClickListener(clickListener)
+            content.setOnClickListener(clickListener)
         }
     }
 
@@ -74,17 +86,5 @@ class NotesAdapter : ListAdapter<NoteEntity, NotesAdapter.NotesViewHolder>(DiffU
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
         val note = getItem(position)
         holder.bind(note)
-    }
-
-    companion object {
-        val DiffUtilCallback = object : DiffUtil.ItemCallback<NoteEntity>() {
-            override fun areItemsTheSame(oldItem: NoteEntity, newItem: NoteEntity): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: NoteEntity, newItem: NoteEntity): Boolean {
-                return oldItem == newItem
-            }
-        }
     }
 }

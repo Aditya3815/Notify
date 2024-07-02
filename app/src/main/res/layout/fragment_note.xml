@@ -10,6 +10,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         tools:context=".fragments.NoteFragments">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -138,6 +139,7 @@
                 app:elevation="0dp"
                 app:fabSize="normal"
                 app:icon="@drawable/ic_round_add_24"
+                app:tint="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
